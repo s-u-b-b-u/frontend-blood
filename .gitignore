@@ -1,0 +1,32 @@
+# Logs & Debugging
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependency Directories
+node_modules/
+
+# Production Build Artifacts
+dist/
+dist-ssr/
+
+# Environment Variables & Sensitive Credentials (DO NOT COMMIT)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+
+# OS & IDE Files
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
