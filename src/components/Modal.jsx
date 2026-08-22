@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function Modal({
   isOpen,
@@ -14,10 +15,10 @@ export default function Modal({
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      const frame = requestAnimationFrame(() => {
+      const timer = setTimeout(() => {
         setAnimating(true);
-      });
-      return () => cancelAnimationFrame(frame);
+      }, 20); // 20ms delay triggers paint cycle reflow
+      return () => clearTimeout(timer);
     } else {
       setAnimating(false);
       const timer = setTimeout(() => {
@@ -42,7 +43,7 @@ export default function Modal({
 
   const activeClass = animating ? 'active' : '';
 
-  return (
+  return createPortal(
     <div className={`modal-scrim ${activeClass}`} onClick={onClose}>
       <div
         className={`modal-container ${size === 'large' ? 'large' : ''} ${activeClass}`}
@@ -76,6 +77,7 @@ export default function Modal({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
