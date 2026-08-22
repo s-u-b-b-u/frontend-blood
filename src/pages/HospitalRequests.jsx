@@ -477,66 +477,6 @@ export default function HospitalRequests() {
     }
   };
 
-  const handleCallSourceAction = async (match, isAdHoc) => {
-    try {
-      const logPayload = {
-        blood_request_id: isAdHoc ? null : (matchingRequest?.id || null),
-        target_source_id: match.source_id,
-        target_source_type: match.source_type
-      };
-      
-      await api.logCallInteraction(token, logPayload);
-      console.log("Logged call interaction successfully.");
-    } catch (err) {
-      console.warn("Failed to log call interaction on backend:", err);
-    }
-  };
-
-  const handleDispatchRequestAction = async (match, isAdHoc) => {
-    try {
-      let requestId = null;
-      let units = 1;
-
-      if (isAdHoc) {
-        // Auto-create a pending blood request first since dispatch requires a blood_request_id
-        const reqPayload = {
-          blood_group_id: customCriteria.blood_group_id || null,
-          blood_component_id: customCriteria.blood_component_id || null,
-          units_requested: Number(customCriteria.units_requested) || 1,
-          priority: customCriteria.priority || 'MEDIUM',
-          clinical_reason: 'Ad-hoc matching engine dispatch request',
-          required_by: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
-        };
-
-        const newReqRes = await api.createBloodRequest(token, reqPayload);
-        requestId = newReqRes.id;
-        units = Number(customCriteria.units_requested) || 1;
-      } else {
-        requestId = matchingRequest.id;
-        units = Number(matchingRequest.units_requested) || 1;
-      }
-
-      const dispatchPayload = {
-        blood_request_id: requestId,
-        source_organization_id: match.source_id,
-        units_requested: units
-      };
-
-      await api.createDispatchRequest(token, dispatchPayload);
-      alert(`Dispatch request successfully submitted to ${match.source_name} for ${units} units!`);
-      
-      fetchData();
-      if (isAdHoc) {
-        setShowResultsModal(false);
-      } else {
-        setIsMatchDrawerOpen(false);
-      }
-    } catch (err) {
-      console.error("Error submitting dispatch request:", err);
-      alert(`Failed to submit dispatch request: ${err.message}`);
-    }
-  };
-
   const handleCreateRequest = async (e) => {
     e.preventDefault();
     try {
@@ -619,7 +559,7 @@ export default function HospitalRequests() {
     }
   ];
 
-  const renderMatchResultsList = (results, isLoading, isError, actionText, onAction, emptyStateConfig, onCallSource) => {
+  const renderMatchResultsList = (results, isLoading, isError, actionText, onAction, emptyStateConfig) => {
     if (isLoading) {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '40px 20px', textAlign: 'center' }}>
@@ -793,8 +733,6 @@ export default function HospitalRequests() {
                     if (!match.contact_phone) {
                       e.preventDefault();
                       alert('No phone number available.');
-                    } else if (onCallSource) {
-                      onCallSource(match);
                     }
                   }}
                 >
@@ -1086,7 +1024,7 @@ export default function HospitalRequests() {
               customLoading, 
               customError, 
               "Request Dispatch", 
-              (match) => handleDispatchRequestAction(match, true),
+              (match) => alert(`Emergency dispatch request sent to ${match.source_name} for blood group ${match.blood_group}!`),
               {
                 bloodGroup: (bloodGroups.find(g => g.id === customCriteria.blood_group_id)?.name) || 'N/A',
                 units: customCriteria.units_requested,
@@ -1100,8 +1038,7 @@ export default function HospitalRequests() {
                   setShowResultsModal(false);
                   setShowStockDrawer(true);
                 }
-              },
-              (match) => handleCallSourceAction(match, true)
+              }
             )}
           </div>
         </div>
@@ -1175,8 +1112,8 @@ export default function HospitalRequests() {
                 matchResults,
                 matchLoading,
                 matchError,
-                "Request Dispatch",
-                (match) => handleDispatchRequestAction(match, false),
+                "Request Transfer",
+                (match) => alert(`Transfer request of ${matchingRequest.units_requested} units of ${matchingRequest.blood_group?.name || matchingRequest.blood_group_name} from ${match.source_name} created successfully!`),
                 {
                   bloodGroup: matchingRequest.blood_group?.name || matchingRequest.blood_group_name,
                   units: matchingRequest.units_requested,
@@ -1188,8 +1125,7 @@ export default function HospitalRequests() {
                   onBroaden: () => {
                     setIsMatchDrawerOpen(false);
                   }
-                },
-                (match) => handleCallSourceAction(match, false)
+                }
               )}
             </div>
           </div>
