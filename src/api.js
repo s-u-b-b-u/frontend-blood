@@ -399,6 +399,88 @@ export const api = {
     return response.json();
   },
 
+  async createDispatchRequest(token, dispatchData) {
+    const response = await fetch(`${API_URL}/dispatch-requests`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dispatchData)
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      let errMsg = 'Failed to create dispatch request';
+      if (error.detail) errMsg = typeof error.detail === 'string' ? error.detail : JSON.stringify(error.detail);
+      throw new Error(errMsg);
+    }
+    return response.json();
+  },
+
+  async approveDispatchRequest(token, id, unitIds) {
+    const response = await fetch(`${API_URL}/dispatch-requests/${id}/approve`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ blood_unit_ids: unitIds })
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      let errMsg = 'Failed to approve dispatch request';
+      if (error.detail) errMsg = typeof error.detail === 'string' ? error.detail : JSON.stringify(error.detail);
+      throw new Error(errMsg);
+    }
+    return response.json();
+  },
+
+  async rejectDispatchRequest(token, id) {
+    const response = await fetch(`${API_URL}/dispatch-requests/${id}/reject`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      let errMsg = 'Failed to reject dispatch request';
+      if (error.detail) errMsg = typeof error.detail === 'string' ? error.detail : JSON.stringify(error.detail);
+      throw new Error(errMsg);
+    }
+    return response.json();
+  },
+
+  async cancelDispatchRequest(token, id) {
+    const response = await fetch(`${API_URL}/dispatch-requests/${id}/cancel`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      let errMsg = 'Failed to cancel dispatch request';
+      if (error.detail) errMsg = typeof error.detail === 'string' ? error.detail : JSON.stringify(error.detail);
+      throw new Error(errMsg);
+    }
+    return response.json();
+  },
+
+  async logCallInteraction(token, logData) {
+    const response = await fetch(`${API_URL}/logs/call-interaction`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(logData)
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      let errMsg = 'Failed to log call interaction';
+      if (error.detail) errMsg = typeof error.detail === 'string' ? error.detail : JSON.stringify(error.detail);
+      throw new Error(errMsg);
+    }
+    return response.json();
+  },
+
   async register(userData) {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
