@@ -153,6 +153,48 @@ export default function HospitalRequests() {
             address: "123 Health Ave, Metro City",
             latitude: 12.9654,
             longitude: 77.5812
+          },
+          {
+            source_type: "HOSPITAL",
+            source_id: "b28ef773-cbcf-40bc-9d0d-ec480749008f",
+            source_name: "Saint Jude Memorial Hospital",
+            blood_group: "A+",
+            component: "Packed Red Blood Cells",
+            available_units: 3,
+            distance_km: 89.1,
+            match_score: 79.5,
+            match_type: "EXACT_MATCH",
+            is_verified: true,
+            reasons: [
+              "✓ Compatible Blood Group (Universal Donor compatibility)",
+              "✓ Verified Hospital Depot",
+              "⚠️ Outside 50km boundary (89.1 km)"
+            ],
+            contact_phone: "+15559876",
+            address: "456 Care Blvd, Hope City",
+            latitude: 12.9811,
+            longitude: 77.6012
+          },
+          {
+            source_type: "DONOR",
+            source_id: "c38ef773-cbcf-40bc-9d0d-ec480749009f",
+            source_name: "Sarah Jenkins (Individual)",
+            blood_group: "A+",
+            component: "Packed Red Blood Cells",
+            available_units: 1,
+            distance_km: 61.2,
+            match_score: 74.5,
+            match_type: "EXACT_MATCH",
+            is_verified: false,
+            reasons: [
+              "✓ Match verified",
+              "⚠️ Unverified Individual Donor profile",
+              "⚠️ Outside 50km boundary (61.2 km)"
+            ],
+            contact_phone: "+15552233",
+            address: "789 Residential St, Metro City",
+            latitude: 12.9722,
+            longitude: 77.5955
           }
         ]);
       } else {
@@ -268,6 +310,48 @@ export default function HospitalRequests() {
             address: "88 East Wing Dr, Metro City",
             latitude: 12.9754,
             longitude: 77.5898
+          },
+          {
+            source_type: "HOSPITAL",
+            source_id: "e58ef773-cbcf-40bc-9d0d-ec480749011f",
+            source_name: "Saint Mary's Medical Center",
+            blood_group: bgCode,
+            component: compCode,
+            available_units: Number(customCriteria.units_requested),
+            distance_km: 92.1,
+            match_score: 87.5,
+            match_type: "EXACT_MATCH",
+            is_verified: true,
+            reasons: [
+              `✓ Compatible Blood Group (${bgCode}) Match`,
+              `✓ Direct hospital transfer compatibility`,
+              "⚠️ Outside 50km boundary (92.1 km)"
+            ],
+            contact_phone: "+15559876",
+            address: "100 Medical Plaza, Metro City",
+            latitude: 12.9811,
+            longitude: 77.6012
+          },
+          {
+            source_type: "DONOR",
+            source_id: "f68ef773-cbcf-40bc-9d0d-ec480749012f",
+            source_name: "Alex Rivera (Individual)",
+            blood_group: bgCode,
+            component: compCode,
+            available_units: 1,
+            distance_km: 64.5,
+            match_score: 81.2,
+            match_type: "EXACT_MATCH",
+            is_verified: false,
+            reasons: [
+              `✓ Exact Blood Group (${bgCode}) Match`,
+              "⚠️ Unverified Donor profile",
+              "⚠️ Outside 50km boundary (64.5 km)"
+            ],
+            contact_phone: "+15554343",
+            address: "12 Pine St, Metro City",
+            latitude: 12.9699,
+            longitude: 77.5912
           }
         ]);
       }
@@ -329,6 +413,48 @@ export default function HospitalRequests() {
           address: "88 East Wing Dr, Metro City",
           latitude: 12.9754,
           longitude: 77.5898
+        },
+        {
+          source_type: "HOSPITAL",
+          source_id: "e58ef773-cbcf-40bc-9d0d-ec480749011f",
+          source_name: "Saint Mary's Medical Center",
+          blood_group: bgCode,
+          component: compCode,
+          available_units: Number(updatedCriteria.units_requested),
+          distance_km: 92.1,
+          match_score: 87.5,
+          match_type: "EXACT_MATCH",
+          is_verified: true,
+          reasons: [
+            `✓ Compatible Blood Group (${bgCode}) Match`,
+            `✓ Direct hospital transfer compatibility`,
+            "⚠️ Outside 50km boundary (92.1 km)"
+          ],
+          contact_phone: "+15559876",
+          address: "100 Medical Plaza, Metro City",
+          latitude: 12.9811,
+          longitude: 77.6012
+        },
+        {
+          source_type: "DONOR",
+          source_id: "f68ef773-cbcf-40bc-9d0d-ec480749012f",
+          source_name: "Alex Rivera (Individual)",
+          blood_group: bgCode,
+          component: compCode,
+          available_units: 1,
+          distance_km: 64.5,
+          match_score: 81.2,
+          match_type: "EXACT_MATCH",
+          is_verified: false,
+          reasons: [
+            `✓ Exact Blood Group (${bgCode}) Match`,
+            "⚠️ Unverified Donor profile",
+            "⚠️ Outside 50km boundary (64.5 km)"
+          ],
+          contact_phone: "+15554343",
+          address: "12 Pine St, Metro City",
+          latitude: 12.9699,
+          longitude: 77.5912
         }
       ]);
     } finally {
@@ -514,6 +640,23 @@ export default function HospitalRequests() {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '16px' }}>
+        {/* Success Alert Banner */}
+        <div style={{ 
+          padding: '10px 14px', 
+          backgroundColor: '#f0fdf4', 
+          border: '1px solid #bbf7d0', 
+          borderRadius: 'var(--radius-md)', 
+          color: 'var(--state-success)', 
+          fontSize: '0.82rem', 
+          fontWeight: '600', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px'
+        }}>
+          <span>✓</span>
+          <span>Success: Found {results.length} compatible {results.length === 1 ? 'match' : 'matches'}!</span>
+        </div>
+
         {results.map((match) => {
           const score = match.match_score;
           const scoreColor = score >= 90 ? 'var(--state-success)' : score >= 75 ? '#d97706' : 'var(--text-muted)';
