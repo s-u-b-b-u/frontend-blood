@@ -15,6 +15,7 @@ export default function HospitalRequests() {
   const [error, setError] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showStockDrawer, setShowStockDrawer] = useState(false);
+  const [showResultsModal, setShowResultsModal] = useState(false);
 
   // States for request-specific matching drawer
   const [matchingRequest, setMatchingRequest] = useState(null);
@@ -196,6 +197,8 @@ export default function HospitalRequests() {
 
   const handleRunDynamicSearch = async (e) => {
     if (e) e.preventDefault();
+    setShowStockDrawer(false);
+    setShowResultsModal(true);
     setCustomLoading(true);
     setCustomError('');
     try {
@@ -557,7 +560,6 @@ export default function HospitalRequests() {
             style={{ padding: '10px 18px', fontSize: '0.85rem' }} 
             onClick={() => {
               setShowStockDrawer(true);
-              handleRunDynamicSearch();
             }}
           >
             🔍 Search Nearby Stock
@@ -663,140 +665,152 @@ export default function HospitalRequests() {
         </form>
       </Modal>
 
-      {/* Nearby Stock Search Center Modal (Dynamic Ad-hoc Matching Form) */}
+      {/* Nearby Stock Search Criteria Modal */}
       <Modal
         isOpen={showStockDrawer}
         onClose={() => setShowStockDrawer(false)}
         title="Nearby Regional Stock Matcher"
-        size="large"
+        size="default"
       >
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '24px', alignItems: 'start' }}>
-          {/* Left Column: Form Controls */}
-          <form onSubmit={handleRunDynamicSearch} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <form onSubmit={handleRunDynamicSearch} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div>
+            <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+              Blood Group
+            </label>
+            <select 
+              className="table-entries-dropdown"
+              style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
+              value={customCriteria.blood_group_id}
+              onChange={(e) => {
+                const bg = bloodGroups.find(g => g.id === e.target.value);
+                setCustomCriteria({
+                  ...customCriteria,
+                  blood_group_id: e.target.value,
+                  blood_group_code: bg ? bg.code : ''
+                });
+              }}
+            >
+              {bloodGroups.map(bg => (
+                <option key={bg.id} value={bg.id}>{bg.name} ({bg.code})</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+              Blood Component
+            </label>
+            <select 
+              className="table-entries-dropdown"
+              style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
+              value={customCriteria.blood_component_id}
+              onChange={(e) => {
+                const comp = bloodComponents.find(c => c.id === e.target.value);
+                setCustomCriteria({
+                  ...customCriteria,
+                  blood_component_id: e.target.value,
+                  blood_component_code: comp ? comp.code : ''
+                });
+              }}
+            >
+              {bloodComponents.map(bc => (
+                <option key={bc.id} value={bc.id}>{bc.name} ({bc.code})</option>
+              ))}
+            </select>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
               <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                Blood Group
-              </label>
-              <select 
-                className="table-entries-dropdown"
-                style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
-                value={customCriteria.blood_group_id}
-                onChange={(e) => {
-                  const bg = bloodGroups.find(g => g.id === e.target.value);
-                  setCustomCriteria({
-                    ...customCriteria,
-                    blood_group_id: e.target.value,
-                    blood_group_code: bg ? bg.code : ''
-                  });
-                }}
-              >
-                {bloodGroups.map(bg => (
-                  <option key={bg.id} value={bg.id}>{bg.name} ({bg.code})</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                Blood Component
-              </label>
-              <select 
-                className="table-entries-dropdown"
-                style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
-                value={customCriteria.blood_component_id}
-                onChange={(e) => {
-                  const comp = bloodComponents.find(c => c.id === e.target.value);
-                  setCustomCriteria({
-                    ...customCriteria,
-                    blood_component_id: e.target.value,
-                    blood_component_code: comp ? comp.code : ''
-                  });
-                }}
-              >
-                {bloodComponents.map(bc => (
-                  <option key={bc.id} value={bc.id}>{bc.name} ({bc.code})</option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                  Units Needed
-                </label>
-                <input 
-                  type="number"
-                  min="1"
-                  className="input-field"
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', fontFamily: 'var(--font-ui)', fontSize: '0.95rem' }}
-                  value={customCriteria.units_requested}
-                  onChange={(e) => setCustomCriteria({ ...customCriteria, units_requested: Number(e.target.value) })}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                  Priority Urgency
-                </label>
-                <select 
-                  className="table-entries-dropdown"
-                  style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
-                  value={customCriteria.priority}
-                  onChange={(e) => setCustomCriteria({ ...customCriteria, priority: e.target.value })}
-                >
-                  <option value="LOW">Low</option>
-                  <option value="NORMAL">Normal</option>
-                  <option value="MEDIUM">Medium</option>
-                  <option value="HIGH">High</option>
-                  <option value="URGENT">Urgent</option>
-                  <option value="CRITICAL">Critical</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                Search Radius: {customCriteria.radius_km} km
-              </label>
-              <input 
-                type="range"
-                min="5"
-                max="200"
-                step="5"
-                style={{ width: '100%', accentColor: 'var(--brand-primary)' }}
-                value={customCriteria.radius_km}
-                onChange={(e) => setCustomCriteria({ ...customCriteria, radius_km: Number(e.target.value) })}
-              />
-            </div>
-
-            <div>
-              <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                Max Results: {customCriteria.limit}
+                Units Needed
               </label>
               <input 
                 type="number"
                 min="1"
-                max="100"
                 className="input-field"
                 style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', fontFamily: 'var(--font-ui)', fontSize: '0.95rem' }}
-                value={customCriteria.limit}
-                onChange={(e) => setCustomCriteria({ ...customCriteria, limit: Number(e.target.value) })}
+                value={customCriteria.units_requested}
+                onChange={(e) => setCustomCriteria({ ...customCriteria, units_requested: Number(e.target.value) })}
+                required
               />
             </div>
 
-            <button 
-              type="submit"
-              className="btn-primary-large"
-              style={{ width: '100%', marginTop: '4px' }}
-            >
-              🔍 Run Matcher Engine
-            </button>
-          </form>
+            <div>
+              <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                Priority Urgency
+              </label>
+              <select 
+                className="table-entries-dropdown"
+                style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
+                value={customCriteria.priority}
+                onChange={(e) => setCustomCriteria({ ...customCriteria, priority: e.target.value })}
+              >
+                <option value="LOW">Low</option>
+                <option value="NORMAL">Normal</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="URGENT">Urgent</option>
+                <option value="CRITICAL">Critical</option>
+              </select>
+            </div>
+          </div>
 
-          {/* Right Column: Ranked Results */}
-          <div style={{ borderLeft: '1px dashed #cbd5e1', paddingLeft: '24px', maxHeight: '520px', overflowY: 'auto', boxSizing: 'border-box' }}>
-            <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--text-main)', marginBottom: '8px' }}>Ranked Match Results</h4>
+          <div>
+            <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+              Search Radius: {customCriteria.radius_km} km
+            </label>
+            <input 
+              type="range"
+              min="5"
+              max="200"
+              step="5"
+              style={{ width: '100%', accentColor: 'var(--brand-primary)' }}
+              value={customCriteria.radius_km}
+              onChange={(e) => setCustomCriteria({ ...customCriteria, radius_km: Number(e.target.value) })}
+            />
+          </div>
+
+          <div>
+            <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+              Max Results: {customCriteria.limit}
+            </label>
+            <input 
+              type="number"
+              min="1"
+              max="100"
+              className="input-field"
+              style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', fontFamily: 'var(--font-ui)', fontSize: '0.95rem' }}
+              value={customCriteria.limit}
+              onChange={(e) => setCustomCriteria({ ...customCriteria, limit: Number(e.target.value) })}
+            />
+          </div>
+
+          <button 
+            type="submit"
+            className="btn-primary-large"
+            style={{ width: '100%', marginTop: '4px' }}
+          >
+            🔍 Run Matcher Engine
+          </button>
+        </form>
+      </Modal>
+
+      {/* Nearby Stock Search Results Modal */}
+      <Modal
+        isOpen={showResultsModal}
+        onClose={() => setShowResultsModal(false)}
+        title="Nearby Stock Matcher Results"
+        size="large"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Target criteria label info summary */}
+          <div style={{ padding: '12px 16px', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              Showing compatibility match rankings for: <strong>{(bloodGroups.find(g => g.id === customCriteria.blood_group_id)?.name) || 'N/A'}</strong> • <strong>{(bloodComponents.find(c => c.id === customCriteria.blood_component_id)?.name) || 'N/A'}</strong> • <strong>{customCriteria.units_requested} Unit(s)</strong> (Priority: <strong>{customCriteria.priority}</strong>, Radius: <strong>{customCriteria.radius_km} km</strong>)
+            </span>
+          </div>
+
+          <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
             {renderMatchResultsList(
               customResults, 
               customLoading, 
