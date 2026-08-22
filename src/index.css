@@ -397,7 +397,6 @@ body {
   transition: background-color var(--transition-fast), transform var(--transition-fast);
   box-shadow: var(--shadow-lg);
 }
-}
 
 .btn-primary-large:hover:not(:disabled) {
   background-color: var(--brand-primary-hover);

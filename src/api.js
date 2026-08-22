@@ -367,6 +367,38 @@ export const api = {
     return response.json();
   },
 
+  async findMatches(token, criteria) {
+    const response = await fetch(`${API_URL}/matching/find-matches`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(criteria)
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      let errMsg = 'Failed to find blood matches';
+      if (error.detail) errMsg = typeof error.detail === 'string' ? error.detail : JSON.stringify(error.detail);
+      throw new Error(errMsg);
+    }
+    return response.json();
+  },
+
+  async getMatchesForRequest(token, requestId, params = {}) {
+    const query = new URLSearchParams(params).toString();
+    const response = await fetch(`${API_URL}/matching/request/${requestId}?${query}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      let errMsg = 'Failed to fetch matches for request';
+      if (error.detail) errMsg = typeof error.detail === 'string' ? error.detail : JSON.stringify(error.detail);
+      throw new Error(errMsg);
+    }
+    return response.json();
+  },
+
   async register(userData) {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
