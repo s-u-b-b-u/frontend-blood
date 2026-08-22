@@ -674,25 +674,12 @@ export default function HospitalRequests() {
 
         {results.map((match) => {
           const score = match.match_score;
-          const scoreColor = score >= 90 ? 'var(--state-success)' : score >= 75 ? '#d97706' : 'var(--text-muted)';
-          
-          let typeColor = '#1e40af';
-          let typeBg = '#dbeafe';
-          let typeBorder = '#bfdbfe';
-          if (match.source_type === 'BLOOD_BANK') {
-            typeColor = '#6b21a8';
-            typeBg = '#f3e8ff';
-            typeBorder = '#d8b4fe';
-          } else if (match.source_type === 'DONOR') {
-            typeColor = '#9d174d';
-            typeBg = '#fce7f3';
-            typeBorder = '#fbcfe8';
-          }
+          const scoreColor = 'var(--text-main)';
+          const badgeBg = '#f1f5f9';
+          const badgeColor = '#475569';
+          const badgeBorder = '#e2e8f0';
 
           const isExact = match.match_type === 'EXACT_MATCH';
-          const matchTypeBg = isExact ? '#ecfdf5' : '#fffbeb';
-          const matchTypeColor = isExact ? '#065f46' : '#b45309';
-          const matchTypeBorder = isExact ? '#a7f3d0' : '#fde68a';
 
           return (
             <div 
@@ -723,9 +710,9 @@ export default function HospitalRequests() {
                   fontWeight: 'bold', 
                   padding: '2px 8px', 
                   borderRadius: 'var(--radius-full)', 
-                  backgroundColor: typeBg, 
-                  color: typeColor,
-                  border: `1px solid ${typeBorder}`
+                  backgroundColor: badgeBg, 
+                  color: badgeColor,
+                  border: `1px solid ${badgeBorder}`
                 }}>
                   {match.source_type.replace('_', ' ')}
                 </span>
@@ -734,9 +721,9 @@ export default function HospitalRequests() {
                   fontWeight: 'bold', 
                   padding: '2px 8px', 
                   borderRadius: 'var(--radius-full)', 
-                  backgroundColor: matchTypeBg, 
-                  color: matchTypeColor,
-                  border: `1px solid ${matchTypeBorder}`
+                  backgroundColor: badgeBg, 
+                  color: badgeColor,
+                  border: `1px solid ${badgeBorder}`
                 }}>
                   {isExact ? 'EXACT MATCH' : 'COMPATIBLE MATCH'}
                 </span>
@@ -746,9 +733,9 @@ export default function HospitalRequests() {
                     fontWeight: 'bold', 
                     padding: '2px 8px', 
                     borderRadius: 'var(--radius-full)', 
-                    backgroundColor: 'var(--state-success-bg)', 
-                    color: 'var(--state-success)',
-                    border: `1px solid var(--state-success-border)`
+                    backgroundColor: '#f0fdf4', 
+                    color: '#15803d',
+                    border: `1px solid #bbf7d0`
                   }}>
                     ✓ Verified
                   </span>
