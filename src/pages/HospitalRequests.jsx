@@ -760,38 +760,7 @@ export default function HospitalRequests() {
                 <div>📦 <strong>Stock:</strong> {match.available_units} {match.available_units === 1 ? 'unit' : 'units'}</div>
               </div>
 
-              {match.reasons && match.reasons.length > 0 && (
-                <div style={{ 
-                  padding: '8px 12px', 
-                  backgroundColor: 'var(--bg-canvas)', 
-                  borderRadius: 'var(--radius-sm)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px'
-                }}>
-                  {match.reasons.map((reason, idx) => {
-                    const isSuccess = reason.startsWith('✓');
-                    const isWarning = reason.startsWith('⚠') || reason.startsWith('!');
-                    return (
-                      <div 
-                        key={idx} 
-                        style={{ 
-                          fontSize: '0.75rem', 
-                          color: isSuccess ? 'var(--state-success)' : isWarning ? 'var(--state-error)' : 'var(--text-muted)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
-                      >
-                        {reason}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', borderTop: '1px dashed #e2e8f0', paddingTop: '8px' }}>
-                <div style={{ marginBottom: '2px' }}>📞 <strong>Phone:</strong> {match.contact_phone || 'N/A'}</div>
                 <div>🏢 <strong>Address:</strong> {match.address || 'N/A'}</div>
               </div>
 
