@@ -279,13 +279,16 @@ export default function HospitalRequests() {
       setCustomResults(data.matches || []);
     } catch (err) {
       console.warn("Failed dynamic search from API, using mock fallback:", err);
-      // Simulate empty search if radius <= 50.0
-      if (customCriteria.radius_km <= 50.0) {
+      
+      const selectedBg = bloodGroups.find(bg => bg.id === customCriteria.blood_group_id);
+      const bgCode = selectedBg?.code || customCriteria.blood_group_code || "";
+      
+      // Simulate empty state ONLY for rare blood groups (AB-, B-) or very small radius (<= 15)
+      if (bgCode.includes("AB_") || bgCode.includes("B_NEG") || customCriteria.radius_km <= 15) {
         setCustomResults([]);
       } else {
-        const selectedBg = bloodGroups.find(bg => bg.id === customCriteria.blood_group_id);
         const selectedComp = bloodComponents.find(comp => comp.id === customCriteria.blood_component_id);
-        const bgCode = selectedBg?.name || "O-Negative";
+        const bgName = selectedBg?.name || "O-Negative";
         const compCode = selectedComp?.name || "Packed Red Blood Cells";
         
         setCustomResults([
@@ -293,18 +296,18 @@ export default function HospitalRequests() {
             source_type: "BLOOD_BANK",
             source_id: "d48ef773-cbcf-40bc-9d0d-ec480749010f",
             source_name: "Metro Central Blood Repository",
-            blood_group: bgCode,
+            blood_group: bgName,
             component: compCode,
             available_units: Number(customCriteria.units_requested) + 2,
-            distance_km: 84.2,
+            distance_km: 14.2, // fits inside 50km!
             match_score: 95.0,
             match_type: "EXACT_MATCH",
             is_verified: true,
             reasons: [
-              `✓ Exact Blood Group (${bgCode}) Match`,
+              `✓ Exact Blood Group (${bgName}) Match`,
               `✓ Sufficient stock (${Number(customCriteria.units_requested) + 2} units available)`,
               "✓ Verified Source",
-              "⚠️ Outside 50km boundary (84.2 km)"
+              "✓ Nearby (14.2 km)"
             ],
             contact_phone: "+15551212",
             address: "88 East Wing Dr, Metro City",
@@ -315,17 +318,17 @@ export default function HospitalRequests() {
             source_type: "HOSPITAL",
             source_id: "e58ef773-cbcf-40bc-9d0d-ec480749011f",
             source_name: "Saint Mary's Medical Center",
-            blood_group: bgCode,
+            blood_group: bgName,
             component: compCode,
             available_units: Number(customCriteria.units_requested),
-            distance_km: 92.1,
+            distance_km: 32.1, // fits inside 50km!
             match_score: 87.5,
             match_type: "EXACT_MATCH",
             is_verified: true,
             reasons: [
-              `✓ Compatible Blood Group (${bgCode}) Match`,
+              `✓ Compatible Blood Group (${bgName}) Match`,
               `✓ Direct hospital transfer compatibility`,
-              "⚠️ Outside 50km boundary (92.1 km)"
+              "✓ Within 50km search range (32.1 km)"
             ],
             contact_phone: "+15559876",
             address: "100 Medical Plaza, Metro City",
@@ -336,17 +339,17 @@ export default function HospitalRequests() {
             source_type: "DONOR",
             source_id: "f68ef773-cbcf-40bc-9d0d-ec480749012f",
             source_name: "Alex Rivera (Individual)",
-            blood_group: bgCode,
+            blood_group: bgName,
             component: compCode,
             available_units: 1,
-            distance_km: 64.5,
+            distance_km: 8.5, // fits inside 50km!
             match_score: 81.2,
             match_type: "EXACT_MATCH",
             is_verified: false,
             reasons: [
-              `✓ Exact Blood Group (${bgCode}) Match`,
+              `✓ Exact Blood Group (${bgName}) Match`,
               "⚠️ Unverified Donor profile",
-              "⚠️ Outside 50km boundary (64.5 km)"
+              "✓ Extremely close (8.5 km)"
             ],
             contact_phone: "+15554343",
             address: "12 Pine St, Metro City",
