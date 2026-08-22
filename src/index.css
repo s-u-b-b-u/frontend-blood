@@ -1194,3 +1194,35 @@ body {
     transform: translateY(0);
   }
 }
+
+/* Indeterminate Horizontal Progress Bar Loader */
+.progress-bar-loader {
+  width: 100%;
+  max-width: 240px;
+  height: 4px;
+  background-color: #f1f5f9;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+}
+
+.progress-bar-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 50%;
+  background-color: var(--brand-primary);
+  border-radius: 4px;
+  animation: loadingBarIndeterminate 1.5s infinite ease-in-out;
+}
+
+@keyframes loadingBarIndeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
