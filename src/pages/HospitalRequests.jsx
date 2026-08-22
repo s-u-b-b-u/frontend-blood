@@ -124,72 +124,82 @@ export default function HospitalRequests() {
       setMatchResults(data.matches || []);
     } catch (err) {
       console.warn("Failed fetching matches from API, using mock fallback:", err);
-      setMatchResults([
-        {
-          source_type: "BLOOD_BANK",
-          source_id: "a18ef773-cbcf-40bc-9d0d-ec480749007f",
-          source_name: "City Central Blood Bank",
-          blood_group: "O-",
-          component: "Packed Red Blood Cells",
-          available_units: 5,
-          distance_km: 4.25,
-          match_score: 92.4,
-          match_type: "EXACT_MATCH",
-          is_verified: true,
-          reasons: [
-            "✓ Exact Blood Group Match",
-            "✓ Sufficient stock (5 units available)",
-            "✓ Nearby (4.3 km)",
-            "✓ Verified Source"
-          ],
-          contact_phone: "+15550199",
-          address: "123 Health Ave, Metro City",
-          latitude: 12.9654,
-          longitude: 77.5812
-        },
-        {
-          source_type: "HOSPITAL",
-          source_id: "b28ef773-cbcf-40bc-9d0d-ec480749008f",
-          source_name: "Saint Jude Memorial Hospital",
-          blood_group: "O-",
-          component: "Packed Red Blood Cells",
-          available_units: 2,
-          distance_km: 12.1,
-          match_score: 87.5,
-          match_type: "EXACT_MATCH",
-          is_verified: true,
-          reasons: [
-            "✓ Compatible Blood Group (Universal Donor O-)",
-            "✓ Partial stock (2 units available)",
-            "✓ Verified Source"
-          ],
-          contact_phone: "+15559876",
-          address: "456 Care Blvd, Hope City",
-          latitude: 12.9811,
-          longitude: 77.6012
-        },
-        {
-          source_type: "DONOR",
-          source_id: "c38ef773-cbcf-40bc-9d0d-ec480749009f",
-          source_name: "John Doe (Individual Donor)",
-          blood_group: "O-",
-          component: "Packed Red Blood Cells",
-          available_units: 1,
-          distance_km: 1.8,
-          match_score: 81.2,
-          match_type: "EXACT_MATCH",
-          is_verified: false,
-          reasons: [
-            "✓ Exact Blood Group Match",
-            "✓ Extremely Close (1.8 km)",
-            "⚠ Unverified Donor profile"
-          ],
-          contact_phone: "+15552233",
-          address: "789 Residential St, Metro City",
-          latitude: 12.9722,
-          longitude: 77.5955
-        }
-      ]);
+      // Return 0 matches for 702 request when radius is <= 50 to test the redesigned empty state!
+      if (requestId === '702' && radius <= 50) {
+        setMatchResults([]);
+      } else if (requestId === '702' && radius > 50) {
+        setMatchResults([
+          {
+            source_type: "BLOOD_BANK",
+            source_id: "a18ef773-cbcf-40bc-9d0d-ec480749007f",
+            source_name: "City Central Blood Bank",
+            blood_group: "A+",
+            component: "Packed Red Blood Cells",
+            available_units: 5,
+            distance_km: 74.25,
+            match_score: 82.4,
+            match_type: "EXACT_MATCH",
+            is_verified: true,
+            reasons: [
+              "✓ Exact Blood Group Match",
+              "✓ Sufficient stock (5 units available)",
+              "⚠️ Outside 50km boundary (74.3 km)",
+              "✓ Verified Source"
+            ],
+            contact_phone: "+15550199",
+            address: "123 Health Ave, Metro City",
+            latitude: 12.9654,
+            longitude: 77.5812
+          }
+        ]);
+      } else {
+        // Default mock results for other requests
+        setMatchResults([
+          {
+            source_type: "BLOOD_BANK",
+            source_id: "a18ef773-cbcf-40bc-9d0d-ec480749007f",
+            source_name: "City Central Blood Bank",
+            blood_group: "O-",
+            component: "Packed Red Blood Cells",
+            available_units: 5,
+            distance_km: 4.25,
+            match_score: 92.4,
+            match_type: "EXACT_MATCH",
+            is_verified: true,
+            reasons: [
+              "✓ Exact Blood Group Match",
+              "✓ Sufficient stock (5 units available)",
+              "✓ Nearby (4.3 km)",
+              "✓ Verified Source"
+            ],
+            contact_phone: "+15550199",
+            address: "123 Health Ave, Metro City",
+            latitude: 12.9654,
+            longitude: 77.5812
+          },
+          {
+            source_type: "HOSPITAL",
+            source_id: "b28ef773-cbcf-40bc-9d0d-ec480749008f",
+            source_name: "Saint Jude Memorial Hospital",
+            blood_group: "O-",
+            component: "Packed Red Blood Cells",
+            available_units: 2,
+            distance_km: 12.1,
+            match_score: 87.5,
+            match_type: "EXACT_MATCH",
+            is_verified: true,
+            reasons: [
+              "✓ Compatible Blood Group (Universal Donor O-)",
+              "✓ Partial stock (2 units available)",
+              "✓ Verified Source"
+            ],
+            contact_phone: "+15559876",
+            address: "456 Care Blvd, Hope City",
+            latitude: 12.9811,
+            longitude: 77.6012
+          }
+        ]);
+      }
     } finally {
       setMatchLoading(false);
     }
@@ -221,8 +231,70 @@ export default function HospitalRequests() {
       setCustomResults(data.matches || []);
     } catch (err) {
       console.warn("Failed dynamic search from API, using mock fallback:", err);
-      const selectedBg = bloodGroups.find(bg => bg.id === customCriteria.blood_group_id);
-      const selectedComp = bloodComponents.find(comp => comp.id === customCriteria.blood_component_id);
+      // Simulate empty search if radius <= 50.0
+      if (customCriteria.radius_km <= 50.0) {
+        setCustomResults([]);
+      } else {
+        const selectedBg = bloodGroups.find(bg => bg.id === customCriteria.blood_group_id);
+        const selectedComp = bloodComponents.find(comp => comp.id === customCriteria.blood_component_id);
+        const bgCode = selectedBg?.name || "O-Negative";
+        const compCode = selectedComp?.name || "Packed Red Blood Cells";
+        
+        setCustomResults([
+          {
+            source_type: "BLOOD_BANK",
+            source_id: "d48ef773-cbcf-40bc-9d0d-ec480749010f",
+            source_name: "Metro Central Blood Repository",
+            blood_group: bgCode,
+            component: compCode,
+            available_units: Number(customCriteria.units_requested) + 2,
+            distance_km: 84.2,
+            match_score: 95.0,
+            match_type: "EXACT_MATCH",
+            is_verified: true,
+            reasons: [
+              `✓ Exact Blood Group (${bgCode}) Match`,
+              `✓ Sufficient stock (${Number(customCriteria.units_requested) + 2} units available)`,
+              "✓ Verified Source",
+              "⚠️ Outside 50km boundary (84.2 km)"
+            ],
+            contact_phone: "+15551212",
+            address: "88 East Wing Dr, Metro City",
+            latitude: 12.9754,
+            longitude: 77.5898
+          }
+        ]);
+      }
+    } finally {
+      setCustomLoading(false);
+    }
+  };
+
+  const runSearchWithUpdatedRadius = async (updatedCriteria) => {
+    setCustomLoading(true);
+    setCustomError('');
+    try {
+      const selectedBg = bloodGroups.find(bg => bg.id === updatedCriteria.blood_group_id);
+      const selectedComp = bloodComponents.find(comp => comp.id === updatedCriteria.blood_component_id);
+      
+      const payload = {
+        blood_group_id: updatedCriteria.blood_group_id || null,
+        blood_group_code: selectedBg?.code || updatedCriteria.blood_group_code || null,
+        blood_component_id: updatedCriteria.blood_component_id || null,
+        blood_component_code: selectedComp?.code || updatedCriteria.blood_component_code || null,
+        units_requested: Number(updatedCriteria.units_requested),
+        priority: updatedCriteria.priority,
+        radius_km: Number(updatedCriteria.radius_km),
+        limit: Number(updatedCriteria.limit),
+        organization_id: user?.organization_id || null
+      };
+      
+      const data = await api.findMatches(token, payload);
+      setCustomResults(data.matches || []);
+    } catch (err) {
+      console.warn("Failed dynamic search radius override:", err);
+      const selectedBg = bloodGroups.find(bg => bg.id === updatedCriteria.blood_group_id);
+      const selectedComp = bloodComponents.find(comp => comp.id === updatedCriteria.blood_component_id);
       const bgCode = selectedBg?.name || "O-Negative";
       const compCode = selectedComp?.name || "Packed Red Blood Cells";
       
@@ -233,41 +305,21 @@ export default function HospitalRequests() {
           source_name: "Metro Central Blood Repository",
           blood_group: bgCode,
           component: compCode,
-          available_units: Number(customCriteria.units_requested) + 2,
-          distance_km: 8.4,
+          available_units: Number(updatedCriteria.units_requested) + 2,
+          distance_km: 84.2,
           match_score: 95.0,
           match_type: "EXACT_MATCH",
           is_verified: true,
           reasons: [
             `✓ Exact Blood Group (${bgCode}) Match`,
-            `✓ Sufficient stock (${Number(customCriteria.units_requested) + 2} units available)`,
-            "✓ Verified Source"
+            `✓ Sufficient stock (${Number(updatedCriteria.units_requested) + 2} units available)`,
+            "✓ Verified Source",
+            "⚠️ Outside 50km boundary (84.2 km)"
           ],
           contact_phone: "+15551212",
           address: "88 East Wing Dr, Metro City",
           latitude: 12.9754,
           longitude: 77.5898
-        },
-        {
-          source_type: "DONOR",
-          source_id: "e58ef773-cbcf-40bc-9d0d-ec480749011f",
-          source_name: "Jane Smith (Individual)",
-          blood_group: bgCode,
-          component: compCode,
-          available_units: 1,
-          distance_km: 3.1,
-          match_score: 78.5,
-          match_type: "EXACT_MATCH",
-          is_verified: true,
-          reasons: [
-            "✓ Exact Blood Group Match",
-            "✓ Nearby (3.1 km)",
-            "✓ Verified Regular Donor"
-          ],
-          contact_phone: "+15554343",
-          address: "12 Pine St, Metro City",
-          latitude: 12.9699,
-          longitude: 77.5912
         }
       ]);
     } finally {
@@ -357,7 +409,7 @@ export default function HospitalRequests() {
     }
   ];
 
-  const renderMatchResultsList = (results, isLoading, isError, actionText, onAction) => {
+  const renderMatchResultsList = (results, isLoading, isError, actionText, onAction, emptyStateConfig) => {
     if (isLoading) {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
@@ -376,10 +428,72 @@ export default function HospitalRequests() {
       );
     }
     if (results.length === 0) {
+      const bgName = emptyStateConfig?.bloodGroup || 'selected type';
+      const unitsNum = emptyStateConfig?.units || 'requested';
+      
       return (
-        <div style={{ padding: '24px 16px', background: '#f8fafc', borderRadius: 'var(--radius-md)', textAlign: 'center', marginTop: '16px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-          <span style={{ display: 'block', fontSize: '1.25rem', marginBottom: '8px' }}>📋</span>
-          <span>No compatible matches found within the search criteria. Try expanding search parameters.</span>
+        <div style={{ 
+          padding: '32px 24px', 
+          backgroundColor: '#ffffff', 
+          borderRadius: 'var(--radius-md)', 
+          border: '1.5px solid var(--border-subtle)', 
+          textAlign: 'center', 
+          marginTop: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '16px'
+        }}>
+          {/* SVG Illustration */}
+          <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ margin: '0 auto', display: 'block' }}>
+            <path d="M26 10C26 10 38 24 38 32C38 38.6274 32.6274 44 26 44C19.3726 44 14 38.6274 14 32C14 24 26 10 26 10Z" stroke="var(--brand-primary)" strokeWidth="2.5" strokeLinejoin="round" />
+            <circle cx="38" cy="38" r="10" stroke="var(--brand-primary)" strokeWidth="2.5" fill="#ffffff" />
+            <path d="M45 45L53 53" stroke="var(--brand-primary)" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
+
+          {/* Heading */}
+          <h3 style={{ 
+            fontFamily: 'var(--font-heading)', 
+            fontSize: 'var(--font-size-md)', 
+            fontWeight: 'var(--weight-bold)', 
+            color: 'var(--text-main)',
+            margin: 0
+          }}>
+            No Compatible Sources Nearby
+          </h3>
+
+          {/* Description */}
+          <p style={{ 
+            color: 'var(--text-muted)', 
+            fontSize: 'var(--font-size-sm)', 
+            lineHeight: '1.5',
+            maxWidth: '380px',
+            margin: 0
+          }}>
+            We were unable to locate any compatible blood stock ({bgName}, {unitsNum} {unitsNum === 1 ? 'unit' : 'units'}) within your current search radius. Consider expanding your search area or adjusting criteria.
+          </p>
+
+          {/* Interactive Actions */}
+          {emptyStateConfig && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', maxWidth: '280px', marginTop: '8px' }}>
+              <button
+                type="button"
+                className="btn-primary-large"
+                style={{ width: '100%', marginTop: 0, padding: '10px', fontSize: '0.85rem' }}
+                onClick={emptyStateConfig.onExpandRadius}
+              >
+                Expand Radius to 100 km
+              </button>
+              <button
+                type="button"
+                className="table-action-outline"
+                style={{ width: '100%', padding: '10px', fontSize: '0.85rem' }}
+                onClick={emptyStateConfig.onBroaden}
+              >
+                Broaden Search Criteria
+              </button>
+            </div>
+          )}
         </div>
       );
     }
@@ -816,7 +930,20 @@ export default function HospitalRequests() {
               customLoading, 
               customError, 
               "Request Dispatch", 
-              (match) => alert(`Emergency dispatch request sent to ${match.source_name} for blood group ${match.blood_group}!`)
+              (match) => alert(`Emergency dispatch request sent to ${match.source_name} for blood group ${match.blood_group}!`),
+              {
+                bloodGroup: (bloodGroups.find(g => g.id === customCriteria.blood_group_id)?.name) || 'N/A',
+                units: customCriteria.units_requested,
+                onExpandRadius: () => {
+                  const updatedCriteria = { ...customCriteria, radius_km: 100 };
+                  setCustomCriteria(updatedCriteria);
+                  runSearchWithUpdatedRadius(updatedCriteria);
+                },
+                onBroaden: () => {
+                  setShowResultsModal(false);
+                  setShowStockDrawer(true);
+                }
+              }
             )}
           </div>
         </div>
@@ -891,7 +1018,18 @@ export default function HospitalRequests() {
                 matchLoading,
                 matchError,
                 "Request Transfer",
-                (match) => alert(`Transfer request of ${matchingRequest.units_requested} units of ${matchingRequest.blood_group?.name || matchingRequest.blood_group_name} from ${match.source_name} created successfully!`)
+                (match) => alert(`Transfer request of ${matchingRequest.units_requested} units of ${matchingRequest.blood_group?.name || matchingRequest.blood_group_name} from ${match.source_name} created successfully!`),
+                {
+                  bloodGroup: matchingRequest.blood_group?.name || matchingRequest.blood_group_name,
+                  units: matchingRequest.units_requested,
+                  onExpandRadius: () => {
+                    setRadiusKm(100);
+                    fetchMatchesForRequest(matchingRequest.id, 100, matchLimit);
+                  },
+                  onBroaden: () => {
+                    setIsMatchDrawerOpen(false);
+                  }
+                }
               )}
             </div>
           </div>
