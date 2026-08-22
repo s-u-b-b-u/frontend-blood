@@ -8,8 +8,8 @@ export default function DashboardLayout() {
       {/* Top Horizontal Glassmorphic Navbar */}
       <Navbar />
 
-      {/* Main Page Content Area */}
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 20px 48px' }}>
+      {/* Main Page Content Area - 100% FULL WIDTH ACROSS ALL PORTALS */}
+      <main style={{ width: '100%', padding: '24px 40px 48px', boxSizing: 'border-box' }}>
         <Outlet />
       </main>
     </div>

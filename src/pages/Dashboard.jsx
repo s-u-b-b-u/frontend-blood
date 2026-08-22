@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAuth } from '../contexts/AuthContext';
 import StatCard from '../components/StatCard';
+import DonorDashboard from './DonorDashboard';
 
 export default function Dashboard() {
   const { user, token } = useAuth();
@@ -15,7 +16,7 @@ export default function Dashboard() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (token && user) {
+    if (token && user && user.role !== 'DONOR') {
       fetchDashboardStats();
     }
   }, [token, user]);
@@ -82,26 +83,6 @@ export default function Dashboard() {
           metric3: { title: 'Audit Trail Events', value: logItems.length, subtitle: 'Logged security events' },
           metric4: { title: 'Pending Verifications', value: orgItems.length - verifiedOrgs, subtitle: 'Awaiting admin check' }
         });
-      } else {
-        // DONOR Role
-        const [donData, notifData, profData] = await Promise.allSettled([
-          api.getDonations(token),
-          api.getNotifications(token),
-          api.getDonorProfile(token)
-        ]);
-
-        const donItems = donData.status === 'fulfilled' ? (donData.value.items || donData.value || []) : [];
-        const notifItems = notifData.status === 'fulfilled' ? (notifData.value.items || notifData.value || []) : [];
-        const prof = profData.status === 'fulfilled' ? profData.value : null;
-
-        const unreadCount = notifItems.filter(n => !n.is_read).length;
-
-        setStats({
-          metric1: { title: 'My Donations', value: donItems.length, subtitle: 'Lifesaving collections' },
-          metric2: { title: 'Unread Alerts', value: unreadCount, subtitle: 'Blood shortage notifications' },
-          metric3: { title: 'Eligibility Status', value: prof?.is_eligible ? 'ELIGIBLE' : 'CHECKING', subtitle: prof?.last_donation_date ? `Last: ${prof.last_donation_date}` : 'Ready to donate' },
-          metric4: { title: 'Completed Drives', value: donItems.filter(d => d.status === 'APPROVED' || d.status === 'COMPLETED').length, subtitle: 'Successful contributions' }
-        });
       }
     } catch (err) {
       console.error('Error fetching dashboard stats', err);
@@ -110,6 +91,11 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
+  // Dedicated Redesigned Dashboard for DONOR Role
+  if (user?.role === 'DONOR') {
+    return <DonorDashboard />;
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>

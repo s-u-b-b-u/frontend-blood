@@ -33,14 +33,13 @@ export default function DonorProfile() {
           const data = await api.getDonorProfile(token);
           if (isMounted) {
             setProfile(data);
-            setFullName(data?.full_name || 'Alex Morgan');
-            setPhone(data?.phone || '+1 555-0192');
+            setFullName(data?.full_name || (user.email ? user.email.split('@')[0] : ''));
+            setPhone(data?.phone || '');
           }
         } catch (err) {
           if (isMounted) {
-            setProfile({ full_name: 'Alex Morgan', phone: '+1 555-0192', blood_group_id: 'O-Negative (O-)', date_of_birth: '1995-04-12', total_donations: 4 });
-            setFullName('Alex Morgan');
-            setPhone('+1 555-0192');
+            setProfile(null);
+            setFullName(user.email ? user.email.split('@')[0] : '');
           }
         }
       }
@@ -72,7 +71,7 @@ export default function DonorProfile() {
   // Skeleton Loading State for Profile Page
   if (authLoading || loading) {
     return (
-      <div style={{ padding: '24px', maxWidth: '720px' }}>
+      <div style={{ width: '100%' }}>
         <div style={{ backgroundColor: 'var(--bg-card)', padding: '32px', borderRadius: 'var(--radius-lg)', border: '1.5px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <Skeleton height="32px" width="50%" />
           <Skeleton height="18px" width="70%" />
@@ -90,8 +89,8 @@ export default function DonorProfile() {
   }
 
   return (
-    <div style={{ padding: '24px', maxWidth: '720px' }}>
-      <div style={{ backgroundColor: 'var(--bg-card)', padding: '32px', borderRadius: 'var(--radius-lg)', border: '1.5px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)' }}>
+    <div style={{ width: '100%' }}>
+      <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: 'var(--radius-lg)', border: '1.5px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)', width: '100%', boxSizing: 'border-box' }}>
         
         {/* Header with Edit Button */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
@@ -131,11 +130,11 @@ export default function DonorProfile() {
               </span>
             </div>
 
-            <p><strong>Full Name:</strong> {profile?.full_name || 'Alex Morgan'}</p>
-            <p><strong>Phone Contact:</strong> {profile?.phone || '+1 555-0192'}</p>
-            <p><strong>Blood Group:</strong> {profile?.blood_group_id || 'O-Negative (O-)'}</p>
-            <p><strong>Date of Birth:</strong> {profile?.date_of_birth || '1995-04-12'}</p>
-            <p><strong>Total Voluntary Donations:</strong> {profile?.total_donations || 4} Donations</p>
+            <p><strong>Full Name:</strong> {profile?.full_name || (user?.email ? user.email.split('@')[0] : 'N/A')}</p>
+            <p><strong>Phone Contact:</strong> {profile?.phone || 'N/A'}</p>
+            <p><strong>Blood Group:</strong> {profile?.blood_group_id || 'N/A'}</p>
+            <p><strong>Date of Birth:</strong> {profile?.date_of_birth || 'N/A'}</p>
+            <p><strong>Total Voluntary Donations:</strong> {profile?.total_donations || 0} Donations</p>
           </div>
         )}
 

@@ -11,7 +11,7 @@ export default function DataTable({
   emptyMessage = 'No records found.'
 }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [entriesPerPage, setEntriesPerPage] = useState(8);
+  const entriesPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc'); // 'asc' | 'desc'
@@ -56,29 +56,9 @@ export default function DataTable({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
-      {/* Top Controls Toolbar */}
-      <div className="table-toolbar">
-        {/* Entries per page dropdown */}
-        <div className="table-entries-selector">
-          <span>Show</span>
-          <select
-            value={entriesPerPage}
-            onChange={(e) => {
-              setEntriesPerPage(Number(e.target.value));
-              setCurrentPage(1);
-            }}
-            className="table-entries-dropdown"
-          >
-            <option value={8}>8</option>
-            <option value={15}>15</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-          </select>
-          <span>entries</span>
-        </div>
-
-        {/* Search Input Box */}
-        <div className="table-search-box">
+      {/* Top Controls Toolbar: CLEAN SEARCH BAR RIGHT ALIGNED WITH SEARCH ICON INSIDE INPUT */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', width: '100%', marginBottom: '4px' }}>
+        <div className="table-search-wrapper">
           <svg className="table-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -97,7 +77,7 @@ export default function DataTable({
       </div>
 
       {/* Table Container */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
         {/* Column Header Row */}
         <div className="table-header-row" style={{ gridTemplateColumns: gridTemplate }}>
           {columns.map((col) => (
@@ -124,14 +104,14 @@ export default function DataTable({
             ))}
           </div>
         ) : error ? (
-          /* Error State Card (Generalized message) */
+          /* Error State Card */
           <div className="state-card">
             <div className="state-icon error">⚠️</div>
             <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--font-size-md)', color: 'var(--text-main)', marginBottom: '4px' }}>
               Unable to Load Records
             </h3>
             <p style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)' }}>
-              We encountered a problem fetching data from the server. Please refresh or try again shortly.
+              We encountered a problem fetching data from the server. Please refresh or try again.
             </p>
           </div>
         ) : currentRows.length === 0 ? (
@@ -159,34 +139,49 @@ export default function DataTable({
         )}
       </div>
 
-      {/* Pagination Footer Controls */}
+      {/* Clean Bottom Pagination Footer (Removed unnecessary "Showing 1 to X entries" text) */}
       {!loading && !error && totalEntries > 0 && (
-        <div className="table-pagination-bar">
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Showing {startIndex + 1} to {Math.min(startIndex + entriesPerPage, totalEntries)} of {totalEntries} entries
-          </div>
+        <div style={{
+          display: 'flex',
+          justify: 'space-between',
+          alignItems: 'center',
+          paddingTop: '12px',
+          borderTop: '1px dashed #e2e8f0',
+          marginTop: '8px'
+        }}>
+          <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-muted)' }}>
+            Page {currentPage} of {totalPages}
+          </span>
 
           <div style={{ display: 'flex', gap: '8px' }}>
             <button
               type="button"
-              className="pagination-btn"
+              className="table-action-outline"
+              style={{
+                padding: '6px 14px',
+                fontSize: '0.8rem',
+                opacity: currentPage === 1 ? 0.5 : 1,
+                cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+              }}
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             >
-              &lt; Previous
+              ‹ Previous
             </button>
-
-            <span className="pagination-page-indicator">
-              Page {currentPage} of {totalPages}
-            </span>
 
             <button
               type="button"
-              className="pagination-btn"
+              className="table-action-outline"
+              style={{
+                padding: '6px 14px',
+                fontSize: '0.8rem',
+                opacity: currentPage === totalPages ? 0.5 : 1,
+                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+              }}
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             >
-              Next &gt;
+              Next ›
             </button>
           </div>
         </div>
