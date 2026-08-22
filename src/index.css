@@ -939,7 +939,7 @@ body {
   animation: fadeIn 0.25s ease forwards;
 }
 
-/* Center Pop-up Modal Container with Gentle Slide-Down */
+/* Center Pop-up Modal Container with Smooth Slide-In */
 .modal-container {
   background-color: #ffffff;
   border: 1.5px solid #e2e8f0;
@@ -951,21 +951,21 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: slideDownModal 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideInModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .modal-container.large {
   max-width: 680px;
 }
 
-@keyframes slideDownModal {
-  from {
+@keyframes slideInModal {
+  0% {
     opacity: 0;
-    transform: translateY(-24px);
+    transform: translateY(60px) scale(0.95);
   }
-  to {
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -1010,6 +1010,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.modal-body::-webkit-scrollbar {
+  display: none;
 }
 
 .modal-footer {

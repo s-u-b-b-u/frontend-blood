@@ -430,22 +430,25 @@ export default function HospitalRequests() {
     if (results.length === 0) {
       const bgName = emptyStateConfig?.bloodGroup || 'selected type';
       const unitsNum = emptyStateConfig?.units || 'requested';
+      const currentRadius = emptyStateConfig?.radius || 50;
+      const nextRadius = currentRadius + 50;
+      const buttonLabel = currentRadius <= 50 ? "Increase Search Radius" : `Increase Radius to ${nextRadius} km`;
       
       return (
         <div style={{ 
-          padding: '32px 24px', 
+          padding: '24px 16px', 
           backgroundColor: '#ffffff', 
           borderRadius: 'var(--radius-md)', 
           border: '1.5px solid var(--border-subtle)', 
           textAlign: 'center', 
-          marginTop: '16px',
+          marginTop: '8px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '16px'
+          gap: '12px'
         }}>
           {/* SVG Illustration */}
-          <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ margin: '0 auto', display: 'block' }}>
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ margin: '0 auto', display: 'block' }}>
             <path d="M26 10C26 10 38 24 38 32C38 38.6274 32.6274 44 26 44C19.3726 44 14 38.6274 14 32C14 24 26 10 26 10Z" stroke="var(--brand-primary)" strokeWidth="2.5" strokeLinejoin="round" />
             <circle cx="38" cy="38" r="10" stroke="var(--brand-primary)" strokeWidth="2.5" fill="#ffffff" />
             <path d="M45 45L53 53" stroke="var(--brand-primary)" strokeWidth="2.5" strokeLinecap="round" />
@@ -475,14 +478,14 @@ export default function HospitalRequests() {
 
           {/* Interactive Actions */}
           {emptyStateConfig && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', maxWidth: '280px', marginTop: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', maxWidth: '280px', marginTop: '4px' }}>
               <button
                 type="button"
                 className="btn-primary-large"
                 style={{ width: '100%', marginTop: 0, padding: '10px', fontSize: '0.85rem' }}
-                onClick={emptyStateConfig.onExpandRadius}
+                onClick={() => emptyStateConfig.onExpandRadius(nextRadius)}
               >
-                Expand Radius to 100 km
+                {buttonLabel}
               </button>
               <button
                 type="button"
@@ -934,8 +937,9 @@ export default function HospitalRequests() {
               {
                 bloodGroup: (bloodGroups.find(g => g.id === customCriteria.blood_group_id)?.name) || 'N/A',
                 units: customCriteria.units_requested,
-                onExpandRadius: () => {
-                  const updatedCriteria = { ...customCriteria, radius_km: 100 };
+                radius: customCriteria.radius_km,
+                onExpandRadius: (newRad) => {
+                  const updatedCriteria = { ...customCriteria, radius_km: newRad };
                   setCustomCriteria(updatedCriteria);
                   runSearchWithUpdatedRadius(updatedCriteria);
                 },
@@ -1022,9 +1026,10 @@ export default function HospitalRequests() {
                 {
                   bloodGroup: matchingRequest.blood_group?.name || matchingRequest.blood_group_name,
                   units: matchingRequest.units_requested,
-                  onExpandRadius: () => {
-                    setRadiusKm(100);
-                    fetchMatchesForRequest(matchingRequest.id, 100, matchLimit);
+                  radius: radiusKm,
+                  onExpandRadius: (newRad) => {
+                    setRadiusKm(newRad);
+                    fetchMatchesForRequest(matchingRequest.id, newRad, matchLimit);
                   },
                   onBroaden: () => {
                     setIsMatchDrawerOpen(false);
