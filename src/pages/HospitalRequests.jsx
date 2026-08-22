@@ -675,10 +675,6 @@ export default function HospitalRequests() {
         {results.map((match) => {
           const score = match.match_score;
           const scoreColor = 'var(--text-main)';
-          const badgeBg = '#f1f5f9';
-          const badgeColor = '#475569';
-          const badgeBorder = '#e2e8f0';
-
           const isExact = match.match_type === 'EXACT_MATCH';
 
           return (
@@ -696,50 +692,21 @@ export default function HospitalRequests() {
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                <span style={{ fontSize: '1.05rem', fontWeight: 'bold', color: 'var(--text-main)' }}>
+                <span style={{ fontSize: '1.05rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                   {match.source_name}
+                  {match.is_verified && (
+                    <span style={{ color: '#10b981', fontSize: '1.1rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center' }} title="Verified Source">
+                      ✓
+                    </span>
+                  )}
                 </span>
                 <span style={{ fontSize: '1rem', fontWeight: 'bold', color: scoreColor, whiteSpace: 'nowrap' }}>
                   {score.toFixed(1)}% Match
                 </span>
               </div>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                <span style={{ 
-                  fontSize: '0.65rem', 
-                  fontWeight: '600', 
-                  padding: '2px 8px', 
-                  borderRadius: 'var(--radius-full)', 
-                  backgroundColor: badgeBg, 
-                  color: badgeColor,
-                  border: `1px solid ${badgeBorder}`
-                }}>
-                  {match.source_type.replace('_', ' ')}
-                </span>
-                <span style={{ 
-                  fontSize: '0.65rem', 
-                  fontWeight: '600', 
-                  padding: '2px 8px', 
-                  borderRadius: 'var(--radius-full)', 
-                  backgroundColor: badgeBg, 
-                  color: badgeColor,
-                  border: `1px solid ${badgeBorder}`
-                }}>
-                  {isExact ? 'EXACT MATCH' : 'COMPATIBLE MATCH'}
-                </span>
-                {match.is_verified && (
-                  <span style={{ 
-                    fontSize: '0.65rem', 
-                    fontWeight: '600', 
-                    padding: '2px 8px', 
-                    borderRadius: 'var(--radius-full)', 
-                    backgroundColor: '#f0fdf4', 
-                    color: '#15803d',
-                    border: `1px solid #bbf7d0`
-                  }}>
-                    ✓ Verified
-                  </span>
-                )}
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: '500', textTransform: 'capitalize', marginTop: '-4px' }}>
+                {match.source_type.toLowerCase().replace('_', ' ')} • {isExact ? 'Exact Match' : 'Compatible Match'}
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.75rem' }}>
