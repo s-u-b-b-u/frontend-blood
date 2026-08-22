@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function Drawer({
   isOpen,
@@ -7,6 +7,25 @@ export default function Drawer({
   children,
   footer
 }) {
+  const [shouldRender, setShouldRender] = useState(isOpen);
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      const frame = requestAnimationFrame(() => {
+        setAnimating(true);
+      });
+      return () => cancelAnimationFrame(frame);
+    } else {
+      setAnimating(false);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 300); // 300ms duration
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   // Close on Escape key press
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -18,12 +37,14 @@ export default function Drawer({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!shouldRender) return null;
+
+  const activeClass = animating ? 'active' : '';
 
   return (
-    <div className="drawer-scrim" onClick={onClose}>
+    <div className={`drawer-scrim ${activeClass}`} onClick={onClose}>
       <div
-        className="drawer-container"
+        className={`drawer-container ${activeClass}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}

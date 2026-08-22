@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function Modal({
   isOpen,
@@ -8,6 +8,25 @@ export default function Modal({
   footer,
   size = 'default' // 'default' (540px) or 'large' (680px)
 }) {
+  const [shouldRender, setShouldRender] = useState(isOpen);
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      const frame = requestAnimationFrame(() => {
+        setAnimating(true);
+      });
+      return () => cancelAnimationFrame(frame);
+    } else {
+      setAnimating(false);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 300); // 300ms duration
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   // Close on Escape key press
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -19,12 +38,14 @@ export default function Modal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!shouldRender) return null;
+
+  const activeClass = animating ? 'active' : '';
 
   return (
-    <div className="modal-scrim" onClick={onClose}>
+    <div className={`modal-scrim ${activeClass}`} onClick={onClose}>
       <div
-        className={`modal-container ${size === 'large' ? 'large' : ''}`}
+        className={`modal-container ${size === 'large' ? 'large' : ''} ${activeClass}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
