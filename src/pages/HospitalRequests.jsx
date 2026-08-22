@@ -120,6 +120,9 @@ export default function HospitalRequests() {
     setMatchLoading(true);
     setMatchError('');
     try {
+      // Simulate network processing delay for matching engine calculations
+      await new Promise(resolve => setTimeout(resolve, 1200));
+
       const data = await api.getMatchesForRequest(token, requestId, { radius_km: radius, limit: limit });
       setMatchResults(data.matches || []);
     } catch (err) {
@@ -212,6 +215,9 @@ export default function HospitalRequests() {
     setCustomLoading(true);
     setCustomError('');
     try {
+      // Simulate network processing delay for matching engine calculations
+      await new Promise(resolve => setTimeout(resolve, 1200));
+
       const selectedBg = bloodGroups.find(bg => bg.id === customCriteria.blood_group_id);
       const selectedComp = bloodComponents.find(comp => comp.id === customCriteria.blood_component_id);
       
@@ -274,6 +280,9 @@ export default function HospitalRequests() {
     setCustomLoading(true);
     setCustomError('');
     try {
+      // Simulate network processing delay for matching engine calculations
+      await new Promise(resolve => setTimeout(resolve, 1200));
+
       const selectedBg = bloodGroups.find(bg => bg.id === updatedCriteria.blood_group_id);
       const selectedComp = bloodComponents.find(comp => comp.id === updatedCriteria.blood_component_id);
       
