@@ -917,16 +917,9 @@ export default function HospitalRequests() {
         isOpen={showResultsModal}
         onClose={() => setShowResultsModal(false)}
         title="Nearby Stock Matcher Results"
-        size="large"
+        size="default"
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Target criteria label info summary */}
-          <div style={{ padding: '12px 16px', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              Showing compatibility match rankings for: <strong>{(bloodGroups.find(g => g.id === customCriteria.blood_group_id)?.name) || 'N/A'}</strong> • <strong>{(bloodComponents.find(c => c.id === customCriteria.blood_component_id)?.name) || 'N/A'}</strong> • <strong>{customCriteria.units_requested} Unit(s)</strong> (Priority: <strong>{customCriteria.priority}</strong>, Radius: <strong>{customCriteria.radius_km} km</strong>)
-            </span>
-          </div>
-
           <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
             {renderMatchResultsList(
               customResults, 
