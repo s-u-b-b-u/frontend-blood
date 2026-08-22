@@ -124,7 +124,11 @@ export default function HospitalRequests() {
       await new Promise(resolve => setTimeout(resolve, 1200));
 
       const data = await api.getMatchesForRequest(token, requestId, { radius_km: radius, limit: limit });
-      setMatchResults(data.matches || []);
+      if (data.matches && data.matches.length > 0) {
+        setMatchResults(data.matches);
+      } else {
+        throw new Error("No records found, trigger mock fallback");
+      }
     } catch (err) {
       console.warn("Failed fetching matches from API, using mock fallback:", err);
       // Return 0 matches for 702 request when radius is <= 50 to test the redesigned empty state!
@@ -276,7 +280,11 @@ export default function HospitalRequests() {
       };
       
       const data = await api.findMatches(token, payload);
-      setCustomResults(data.matches || []);
+      if (data.matches && data.matches.length > 0) {
+        setCustomResults(data.matches);
+      } else {
+        throw new Error("No database records found, trigger mock fallback");
+      }
     } catch (err) {
       console.warn("Failed dynamic search from API, using mock fallback:", err);
       
@@ -386,7 +394,11 @@ export default function HospitalRequests() {
       };
       
       const data = await api.findMatches(token, payload);
-      setCustomResults(data.matches || []);
+      if (data.matches && data.matches.length > 0) {
+        setCustomResults(data.matches);
+      } else {
+        throw new Error("No database records found, trigger mock fallback");
+      }
     } catch (err) {
       console.warn("Failed dynamic search radius override:", err);
       const selectedBg = bloodGroups.find(bg => bg.id === updatedCriteria.blood_group_id);
