@@ -696,7 +696,7 @@ export default function HospitalRequests() {
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                <span style={{ fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-main)' }}>
+                <span style={{ fontSize: '1.05rem', fontWeight: 'bold', color: 'var(--text-main)' }}>
                   {match.source_name}
                 </span>
                 <span style={{ fontSize: '1rem', fontWeight: 'bold', color: scoreColor, whiteSpace: 'nowrap' }}>
@@ -706,8 +706,8 @@ export default function HospitalRequests() {
 
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 <span style={{ 
-                  fontSize: '0.7rem', 
-                  fontWeight: 'bold', 
+                  fontSize: '0.65rem', 
+                  fontWeight: '600', 
                   padding: '2px 8px', 
                   borderRadius: 'var(--radius-full)', 
                   backgroundColor: badgeBg, 
@@ -717,8 +717,8 @@ export default function HospitalRequests() {
                   {match.source_type.replace('_', ' ')}
                 </span>
                 <span style={{ 
-                  fontSize: '0.7rem', 
-                  fontWeight: 'bold', 
+                  fontSize: '0.65rem', 
+                  fontWeight: '600', 
                   padding: '2px 8px', 
                   borderRadius: 'var(--radius-full)', 
                   backgroundColor: badgeBg, 
@@ -729,8 +729,8 @@ export default function HospitalRequests() {
                 </span>
                 {match.is_verified && (
                   <span style={{ 
-                    fontSize: '0.7rem', 
-                    fontWeight: 'bold', 
+                    fontSize: '0.65rem', 
+                    fontWeight: '600', 
                     padding: '2px 8px', 
                     borderRadius: 'var(--radius-full)', 
                     backgroundColor: '#f0fdf4', 
@@ -742,13 +742,19 @@ export default function HospitalRequests() {
                 )}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                <div>📍 <strong>Distance:</strong> {match.distance_km.toFixed(2)} km</div>
-                <div>📦 <strong>Stock:</strong> {match.available_units} {match.available_units === 1 ? 'unit' : 'units'}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.75rem' }}>
+                <div style={{ fontWeight: 'normal', color: 'var(--text-secondary)' }}>
+                  Distance: <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{match.distance_km.toFixed(2)} km</span>
+                </div>
+                <div style={{ fontWeight: 'normal', color: 'var(--text-secondary)' }}>
+                  Stock: <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{match.available_units} {match.available_units === 1 ? 'unit' : 'units'}</span>
+                </div>
               </div>
 
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', borderTop: '1px dashed #e2e8f0', paddingTop: '8px' }}>
-                <div>🏢 <strong>Address:</strong> {match.address || 'N/A'}</div>
+              <div style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '8px' }}>
+                <div style={{ fontWeight: 'normal', color: 'var(--text-secondary)', fontSize: '0.7rem' }}>
+                  Address: <span style={{ color: 'var(--text-main)' }}>{match.address || 'N/A'}</span>
+                </div>
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
