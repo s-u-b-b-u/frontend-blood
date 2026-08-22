@@ -663,145 +663,150 @@ export default function HospitalRequests() {
         </form>
       </Modal>
 
-      {/* Nearby Stock Search Drawer (Dynamic Ad-hoc Matching Form) */}
-      <Drawer
+      {/* Nearby Stock Search Center Modal (Dynamic Ad-hoc Matching Form) */}
+      <Modal
         isOpen={showStockDrawer}
         onClose={() => setShowStockDrawer(false)}
         title="Nearby Regional Stock Matcher"
+        size="large"
       >
-        <form onSubmit={handleRunDynamicSearch} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div>
-            <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-              Blood Group
-            </label>
-            <select 
-              className="table-entries-dropdown"
-              style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
-              value={customCriteria.blood_group_id}
-              onChange={(e) => {
-                const bg = bloodGroups.find(g => g.id === e.target.value);
-                setCustomCriteria({
-                  ...customCriteria,
-                  blood_group_id: e.target.value,
-                  blood_group_code: bg ? bg.code : ''
-                });
-              }}
-            >
-              {bloodGroups.map(bg => (
-                <option key={bg.id} value={bg.id}>{bg.name} ({bg.code})</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-              Blood Component
-            </label>
-            <select 
-              className="table-entries-dropdown"
-              style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
-              value={customCriteria.blood_component_id}
-              onChange={(e) => {
-                const comp = bloodComponents.find(c => c.id === e.target.value);
-                setCustomCriteria({
-                  ...customCriteria,
-                  blood_component_id: e.target.value,
-                  blood_component_code: comp ? comp.code : ''
-                });
-              }}
-            >
-              {bloodComponents.map(bc => (
-                <option key={bc.id} value={bc.id}>{bc.name} ({bc.code})</option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '24px', alignItems: 'start' }}>
+          {/* Left Column: Form Controls */}
+          <form onSubmit={handleRunDynamicSearch} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div>
               <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                Units Needed
+                Blood Group
+              </label>
+              <select 
+                className="table-entries-dropdown"
+                style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
+                value={customCriteria.blood_group_id}
+                onChange={(e) => {
+                  const bg = bloodGroups.find(g => g.id === e.target.value);
+                  setCustomCriteria({
+                    ...customCriteria,
+                    blood_group_id: e.target.value,
+                    blood_group_code: bg ? bg.code : ''
+                  });
+                }}
+              >
+                {bloodGroups.map(bg => (
+                  <option key={bg.id} value={bg.id}>{bg.name} ({bg.code})</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                Blood Component
+              </label>
+              <select 
+                className="table-entries-dropdown"
+                style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
+                value={customCriteria.blood_component_id}
+                onChange={(e) => {
+                  const comp = bloodComponents.find(c => c.id === e.target.value);
+                  setCustomCriteria({
+                    ...customCriteria,
+                    blood_component_id: e.target.value,
+                    blood_component_code: comp ? comp.code : ''
+                  });
+                }}
+              >
+                {bloodComponents.map(bc => (
+                  <option key={bc.id} value={bc.id}>{bc.name} ({bc.code})</option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                  Units Needed
+                </label>
+                <input 
+                  type="number"
+                  min="1"
+                  className="input-field"
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', fontFamily: 'var(--font-ui)', fontSize: '0.95rem' }}
+                  value={customCriteria.units_requested}
+                  onChange={(e) => setCustomCriteria({ ...customCriteria, units_requested: Number(e.target.value) })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                  Priority Urgency
+                </label>
+                <select 
+                  className="table-entries-dropdown"
+                  style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
+                  value={customCriteria.priority}
+                  onChange={(e) => setCustomCriteria({ ...customCriteria, priority: e.target.value })}
+                >
+                  <option value="LOW">Low</option>
+                  <option value="NORMAL">Normal</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                  <option value="URGENT">Urgent</option>
+                  <option value="CRITICAL">Critical</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                Search Radius: {customCriteria.radius_km} km
               </label>
               <input 
-                type="number"
-                min="1"
-                className="input-field"
-                style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', fontFamily: 'var(--font-ui)', fontSize: '0.95rem' }}
-                value={customCriteria.units_requested}
-                onChange={(e) => setCustomCriteria({ ...customCriteria, units_requested: Number(e.target.value) })}
-                required
+                type="range"
+                min="5"
+                max="200"
+                step="5"
+                style={{ width: '100%', accentColor: 'var(--brand-primary)' }}
+                value={customCriteria.radius_km}
+                onChange={(e) => setCustomCriteria({ ...customCriteria, radius_km: Number(e.target.value) })}
               />
             </div>
 
             <div>
               <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-                Priority Urgency
+                Max Results: {customCriteria.limit}
               </label>
-              <select 
-                className="table-entries-dropdown"
-                style={{ width: '100%', padding: '10px 12px', fontSize: '0.95rem' }}
-                value={customCriteria.priority}
-                onChange={(e) => setCustomCriteria({ ...customCriteria, priority: e.target.value })}
-              >
-                <option value="LOW">Low</option>
-                <option value="NORMAL">Normal</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
-                <option value="URGENT">Urgent</option>
-                <option value="CRITICAL">Critical</option>
-              </select>
+              <input 
+                type="number"
+                min="1"
+                max="100"
+                className="input-field"
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', fontFamily: 'var(--font-ui)', fontSize: '0.95rem' }}
+                value={customCriteria.limit}
+                onChange={(e) => setCustomCriteria({ ...customCriteria, limit: Number(e.target.value) })}
+              />
             </div>
+
+            <button 
+              type="submit"
+              className="btn-primary-large"
+              style={{ width: '100%', marginTop: '4px' }}
+            >
+              🔍 Run Matcher Engine
+            </button>
+          </form>
+
+          {/* Right Column: Ranked Results */}
+          <div style={{ borderLeft: '1px dashed #cbd5e1', paddingLeft: '24px', maxHeight: '520px', overflowY: 'auto', boxSizing: 'border-box' }}>
+            <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--text-main)', marginBottom: '8px' }}>Ranked Match Results</h4>
+            {renderMatchResultsList(
+              customResults, 
+              customLoading, 
+              customError, 
+              "Request Dispatch", 
+              (match) => alert(`Emergency dispatch request sent to ${match.source_name} for blood group ${match.blood_group}!`)
+            )}
           </div>
-
-          <div>
-            <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-              Search Radius: {customCriteria.radius_km} km
-            </label>
-            <input 
-              type="range"
-              min="5"
-              max="200"
-              step="5"
-              style={{ width: '100%', accentColor: 'var(--brand-primary)' }}
-              value={customCriteria.radius_km}
-              onChange={(e) => setCustomCriteria({ ...customCriteria, radius_km: Number(e.target.value) })}
-            />
-          </div>
-
-          <div>
-            <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
-              Max Results: {customCriteria.limit}
-            </label>
-            <input 
-              type="number"
-              min="1"
-              max="100"
-              className="input-field"
-              style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', fontFamily: 'var(--font-ui)', fontSize: '0.95rem' }}
-              value={customCriteria.limit}
-              onChange={(e) => setCustomCriteria({ ...customCriteria, limit: Number(e.target.value) })}
-            />
-          </div>
-
-          <button 
-            type="submit"
-            className="btn-primary-large"
-            style={{ width: '100%', marginTop: '4px' }}
-          >
-            🔍 Run Matcher Engine
-          </button>
-        </form>
-
-        <div style={{ borderTop: '1px dashed #cbd5e1', marginTop: '20px', paddingTop: '10px' }}>
-          <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--text-main)' }}>Ranked Match Results</h4>
-          {renderMatchResultsList(
-            customResults, 
-            customLoading, 
-            customError, 
-            "Request Dispatch", 
-            (match) => alert(`Emergency dispatch request sent to ${match.source_name} for blood group ${match.blood_group}!`)
-          )}
         </div>
-      </Drawer>
+      </Modal>
 
       {/* Request-Specific Match Rankings Drawer */}
       <Drawer
